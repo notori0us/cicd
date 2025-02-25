@@ -11,4 +11,4 @@ runs:
     - name: Install dependencies
       run: bundle install
     - name: Test the project
-      run: bundle exec ruby test*
+      run: bundle exec ruby *test*
