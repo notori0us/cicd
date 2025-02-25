@@ -46,6 +46,10 @@ jobs:
     steps:
       - name: Waiting for Approval
         run: echo "Waiting for staging approval..."
+      - name: Generate GitHub Compare Link
+        run: |
+          BASE_BRANCH="main"
+          echo "🔗 Compare changes: https://github.com/${{ github.repository }}/compare/${BASE_BRANCH}...${{ github.sha }}"
 
   deploy_staging:
     name: Deploy to Staging
