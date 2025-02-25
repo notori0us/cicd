@@ -28,7 +28,6 @@ jobs:
       - name: Deploy to Dev (Placeholder)
         run: echo "Deploying to Development..."
 
-  # 3️⃣ Integration Tests on Development
   test_dev:
     name: Test Development Environment
     needs: deploy_dev
