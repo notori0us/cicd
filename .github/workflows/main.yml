@@ -36,25 +36,14 @@ jobs:
       - name: Run Integration Tests on Dev (Placeholder)
         run: echo "Running tests against Development..."
 
-        # 🔹 Manual Approval Before Staging Deployment
-  approval_staging:
-    name: Approval for Staging
-    needs: test_dev
-    runs-on: ubuntu-latest
-    environment:
-      name: staging  # Requires approval in GitHub UI
-    steps:
-      - name: Waiting for Approval
-        run: echo "Waiting for staging approval..."
-      - name: Generate GitHub Compare Link
-        run: |
-          BASE_BRANCH="main"
-          echo "🔗 Compare changes: https://github.com/${{ github.repository }}/compare/${BASE_BRANCH}...${{ github.sha }}"
-
   deploy_staging:
     name: Deploy to Staging
     needs: approval_staging
     runs-on: ubuntu-latest
+    concurrency:
+        group: myapp-staging-deploy
+    environment:
+        name: staging #requires approval in Github UI
     steps:
       - name: Deploy to Staging
         run: echo "Deploying to Staging..."
@@ -63,15 +52,18 @@ jobs:
     name: Test Staging
     needs: deploy_staging
     runs-on: ubuntu-latest
+    concurrency:
+        group: myapp-staging-deploy
     steps:
       - name: Run Tests on Staging
         run: echo "Running tests on Staging..."
 
-  # 🔹 Manual Approval Before Production Deployment
   approval_production:
     name: Approval for Production
     needs: test_staging
     runs-on: ubuntu-latest
+    concurrency:
+        group: myapp-prod-deploy
     environment:
       name: prod1  # Requires approval in GitHub UI
     steps:
@@ -82,6 +74,8 @@ jobs:
     name: Deploy to Region 1
     needs: approval_production
     runs-on: ubuntu-latest
+    concurrency:
+        group: myapp-prod-deploy
     steps:
       - name: Deploy to Region 1
         run: echo "Deploying to Region 1..."
@@ -90,6 +84,8 @@ jobs:
     name: Deploy to Region 2
     needs: deploy_region_1
     runs-on: ubuntu-latest
+    concurrency:
+        group: myapp-prod-deploy
     steps:
       - name: Deploy to Region 2
         run: echo "Deploying to Region 2..."
@@ -98,6 +94,8 @@ jobs:
     name: Deploy to Region 3
     needs: deploy_region_2
     runs-on: ubuntu-latest
+    concurrency:
+        group: myapp-prod-deploy
     steps:
       - name: Deploy to Region 3
         run: echo "Deploying to Region 3..."
